@@ -1,10 +1,11 @@
-import pygame
+import pygame, sys, random
 from pygame.locals import *
 
-suits = ['diamond', 'spade', 'heart', 'club']
-names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+suits = ['d', 's', 'h', 'c']
+names = ['2', '3', '4', '5', '6', '7', '8', '9', 't', 'j', 'q', 'k', 'a']
 green = pygame.Color(0, 255, 0)
 white = pygame.Color(255, 255, 255)
+red = pygame.Color(255, 0, 0)
 
 class Card():
 	def __init__(self, suitVal, nameVal):
@@ -17,8 +18,10 @@ class Card():
 	def name(self):
 		return names[self.nameVal]
 
-	#def displayCard(x, y, hide=False):
-		
+	def displayCard(self, surface, x, y, hide=False):
+		cardName = self.name() + self.suit() + ".gif"
+		cardImage = pygame.image.load("cards/"+cardName)
+		surface.blit(cardImage, (x-50, y-50))	
 
 	def __str__(self):
 		return "%s of %ss" % (self.name(), self.suit())
@@ -30,27 +33,33 @@ class Deck():
 			for name in range(len(names)):
 				self.cards.append(Card(suit, name))	
 
+	def shuffle(self):
+		random.shuffle(self.cards)
+
 	def getCards(self):
 		return self.cards
 
 if __name__ == '__main__':
 	deck = Deck()
+	deck.shuffle()
 	for card in deck.getCards():
 		print card
-	
+	print len(deck.getCards())	
+
 	pygame.init()
 	fpsClock = pygame.time.Clock()
 
 	#display board
-	windowSurfaceObj = pygame.display.set_mode((640, 480))
-	pygame.display.set_caption('Heads Up!')
+	windowSurfaceObj = pygame.display.set_mode((200, 200))
+	pygame.display.set_caption('Test!')
 	
 	while True:
-		windowSurfaceObj.fill(green)
+
+		windowSurfaceObj.fill(white)
+
 		
-		#draw card outlines
-		pygame.draw.rect(windowSurfaceObj, white, (10, 10, 50, 100))
-		
+		deck.getCards()[0].displayCard(windowSurfaceObj, 100, 100, False)
+
 		for event in pygame.event.get():
 			if event.type == QUIT:
 				pygame.quit()
