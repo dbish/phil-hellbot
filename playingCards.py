@@ -2,7 +2,7 @@ import pygame, sys, random
 from pygame.locals import *
 
 suits = ['d', 's', 'h', 'c']
-names = ['2', '3', '4', '5', '6', '7', '8', '9', 't', 'j', 'q', 'k', 'a']
+names = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
 green = pygame.Color(0, 255, 0)
 white = pygame.Color(255, 255, 255)
 red = pygame.Color(255, 0, 0)
@@ -18,13 +18,13 @@ class Card():
 	def name(self):
 		return names[self.nameVal]
 
-	def displayCard(self, surface, x, y, hide=False):
+	def displayCard(self, surface, x, y):
 		cardName = self.name() + self.suit() + ".gif"
 		cardImage = pygame.image.load("cards/"+cardName)
 		surface.blit(cardImage, (x-50, y-50))	
 
 	def __str__(self):
-		return "%s of %ss" % (self.name(), self.suit())
+		return "%s%s" % (self.name(), self.suit())
 
 class Deck():
 	def __init__(self):
@@ -32,18 +32,30 @@ class Deck():
 		for suit in range(len(suits)):
 			for name in range(len(names)):
 				self.cards.append(Card(suit, name))	
-
+	
+	#random shuffle uses the Knuth algo
 	def shuffle(self):
 		random.shuffle(self.cards)
+
+	def nextCard(self):
+		return self.cards.pop()	
 
 	def getCards(self):
 		return self.cards
 
+	def remove(self, c):
+		for card in self.cards:
+			if (card.suitVal == c.suitVal) and (card.nameVal == c.nameVal):
+				self.cards.remove(card)
+
+	def length(self):
+		return len(self.cards)
+
 if __name__ == '__main__':
 	deck = Deck()
 	deck.shuffle()
-	for card in deck.getCards():
-		print card
+	for i in range(51):
+		print deck.nextCard() 
 	print len(deck.getCards())	
 
 	pygame.init()
@@ -58,7 +70,7 @@ if __name__ == '__main__':
 		windowSurfaceObj.fill(white)
 
 		
-		deck.getCards()[0].displayCard(windowSurfaceObj, 100, 100, False)
+		deck.getCards()[0].displayCard(windowSurfaceObj, 100, 100)
 
 		for event in pygame.event.get():
 			if event.type == QUIT:
